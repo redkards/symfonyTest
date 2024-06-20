@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\RecettesRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -10,6 +12,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: RecettesRepository::class)]
 #[UniqueEntity('name')]
+#[ORM\HasLifecycleCallbacks]
 class Recettes
 {
     #[ORM\Id]
@@ -35,7 +38,7 @@ class Recettes
     #[ORM\Column(nullable: true)]
     #[Assert\Positive()]
     #[Assert\LessThan(51)]
-    private ?int $nb_people = null;
+    private ?int $nbPeople = null;
 
     #[ORM\Column(nullable: true)]
     #[Assert\Positive()]
@@ -52,15 +55,17 @@ class Recettes
     private ?int $price = null;
 
     #[ORM\Column]
-    private ?bool $is_favorite = null;
+    private ?bool $isFavorite = null;
 
     #[ORM\Column]
     #[Assert\NotNull()]
-    private ?\DateTimeImmutable $created_at = null;
+    private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
     #[Assert\NotNull()]
-    private ?\DateTimeImmutable $updated_at = null;
+    private ?\DateTimeImmutable $updatedAt = null;
+
+
 
     public function getId(): ?int
     {
@@ -93,12 +98,12 @@ class Recettes
 
     public function getNbPeople(): ?int
     {
-        return $this->nb_people;
+        return $this->nbPeople;
     }
 
-    public function setNbPeople(?int $nb_people): static
+    public function setNbPeople(?int $nbPeople): static
     {
-        $this->nb_people = $nb_people;
+        $this->nbPeople = $nbPeople;
 
         return $this;
     }
@@ -141,42 +146,49 @@ class Recettes
 
     public function isFavorite(): ?bool
     {
-        return $this->is_favorite;
+        return $this->isFavorite;
     }
 
-    public function setFavorite(bool $is_favorite): static
+    public function setFavorite(bool $isFavorite): static
     {
-        $this->is_favorite = $is_favorite;
+        $this->isFavorite = $isFavorite;
 
         return $this;
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->created_at;
+        return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $created_at): static
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
-        $this->created_at = $created_at;
+        $this->createdAt = $createdAt;
 
         return $this;
     }
 
     public function getUpdatedAt(): ?\DateTimeImmutable
     {
-        return $this->updated_at;
+        return $this->updatedAt;
     }
 
-    public function setUpdatedAt(\DateTimeImmutable $updated_at): static
+    
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
     {
-        $this->updated_at = $updated_at;
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
+
+    #[ORM\ManyToMany(targetEntity: Ingredient::class)]
+private Collection $ingredients;
+
     public function  __construct(){
+       
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
+        $this ->ingredients = new ArrayCollection();
        
     }
 }

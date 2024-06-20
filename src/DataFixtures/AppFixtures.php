@@ -5,6 +5,7 @@ namespace App\DataFixtures;
 use Faker\Generator;
 use Faker\Factory;
 use App\Entity\Ingredient;
+use App\Entity\Recettes;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
@@ -31,7 +32,7 @@ class AppFixtures extends Fixture
                    
          $manager->persist($ingredient);
         }
-
-        $manager->flush();
+   
+$manager->flush();
     }
 }
