@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\RecettesRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -28,12 +29,12 @@ class Recettes
         maxMessage: 'Le nom doit faire au plus {{ limit }} caractères'
     ) ]
     #[Assert\NotBlank()]
-    private ?string $nom = null;
+    private ?string $name = null;
 
-    #[ORM\Column(type: Types::TIME_IMMUTABLE)]
+    #[ORM\Column]
     #[Assert\Positive()]
     #[Assert\LessThan(1441)]
-    private ?\DateTimeImmutable $time = null;
+    private ?int $time = null;
 
     #[ORM\Column(nullable: true)]
     #[Assert\Positive()]
@@ -65,6 +66,15 @@ class Recettes
     #[Assert\NotNull()]
     private ?\DateTimeImmutable $updatedAt = null;
 
+   
+    
+        /**
+         * @var Collection<int, ingredient>
+         */
+        #[ORM\ManyToMany(targetEntity: ingredient::class, inversedBy: 'recettes')]
+        private Collection $ingredients;
+    
+
 
 
     public function getId(): ?int
@@ -72,24 +82,24 @@ class Recettes
         return $this->id;
     }
 
-    public function getNom(): ?string
+    public function getName(): ?string
     {
-        return $this->nom;
+        return $this->name;
     }
 
-    public function setNom(string $nom): static
+    public function setName(string $name): static
     {
-        $this->nom = $nom;
+        $this->name = $name;
 
         return $this;
     }
 
-    public function getTime(): ?\DateTimeImmutable
+    public function getTime(): ?int
     {
         return $this->time;
     }
 
-    public function setTime(\DateTimeImmutable $time): static
+    public function setTime(int $time): static
     {
         $this->time = $time;
 
@@ -149,7 +159,7 @@ class Recettes
         return $this->isFavorite;
     }
 
-    public function setFavorite(bool $isFavorite): static
+    public function setisFavorite(bool $isFavorite): static
     {
         $this->isFavorite = $isFavorite;
 
@@ -161,6 +171,8 @@ class Recettes
         return $this->createdAt;
     }
 
+
+    
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
@@ -181,14 +193,47 @@ class Recettes
         return $this;
     }
 
-    #[ORM\ManyToMany(targetEntity: Ingredient::class)]
-private Collection $ingredients;
+    
 
+   
+
+    #[ORM\PrePersist]
+
+  public function setUpdatedAtValue(): void{
+    $this->updatedAt = new DateTimeImmutable();
+  }
+
+ 
     public function  __construct(){
        
-        $this->createdAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
+        $this->createdAt = new DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable();
         $this ->ingredients = new ArrayCollection();
+      
        
+    }
+
+    /**
+     * @return Collection<int, ingredient>
+     */
+    public function getIngredient(): Collection
+    {
+        return $this->ingredients;
+    }
+
+    public function addIngredient(ingredient $ingredient): static
+    {
+        if (!$this->ingredients->contains($ingredient)) {
+            $this->ingredients->add($ingredient);
+        }
+
+        return $this;
+    }
+
+    public function removeIngredient(ingredient $ingredient): static
+    {
+        $this->ingredients->removeElement($ingredient);
+
+        return $this;
     }
 }

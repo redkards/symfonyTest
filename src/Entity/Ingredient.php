@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 use App\Repository\IngredientRepository;
@@ -36,6 +38,12 @@ class Ingredient
     #[ORM\Column]
     #[Assert\NotNull()]
     private ?\DateTimeImmutable $createdAt = null;
+
+    /**
+     * @var Collection<int, Recettes>
+     */
+    #[ORM\ManyToMany(targetEntity: Recettes::class, mappedBy: 'ingredient')]
+    private Collection $recettes;
 
     
 
@@ -81,6 +89,38 @@ class Ingredient
     }
     public function  __construct(){
         $this->createdAt = new \DateTimeImmutable();
+        $this->recettes = new ArrayCollection();
        
+    }
+
+    /**
+     * @return Collection<int, Recettes>
+     */
+    public function getRecettes(): Collection
+    {
+        return $this->recettes;
+    }
+
+    public function addRecette(Recettes $recette): static
+    {
+        if (!$this->recettes->contains($recette)) {
+            $this->recettes->add($recette);
+            $recette->addIngredient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRecette(Recettes $recette): static
+    {
+        if ($this->recettes->removeElement($recette)) {
+            $recette->removeIngredient($this);
+        }
+
+        return $this;
+    }
+
+    public function __toString() {
+        return $this->name;
     }
 }

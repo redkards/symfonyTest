@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}First Project recettes{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+{% if not recettes.items is same as ([]) %}
+    <h1>Mes ingrédients</h1>
+
+    <a href="{{path('app_recettes_new')}}" class="btn btn-primary mt-4" >ajouter une recette</a>
+
+    {% for message in app.flashes('success') %}
+<div class="alert mt-4 alert-success">
+{{message}}
+</div>
+{% endfor %}
+
+    <table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">Numéro</th>
+      <th scope="col">Nom</th>
+      <th scope="col">Prix</th>
+      <th scope="col">difficulté</th>
+      <th scope="col">date de création</th>
+      <th scope="col">modification</th>
+      <th scope="col">suppression</th>
+    </tr>
+  </thead>
+  
+  <div class="count">
+    <h4> Il y a{{ recettes.getTotalItemCount }}recettes</h4>
+</div>
+  <tbody>
+    {% for recette in recettes %}
+    <tr class="table-primary">
+      <th scope="row">{{recette.id}}</th>
+      <td>{{recette.name}}</td>
+      <td>{{(recette.price is same as(null)) ? "non renseigné" : recette.price}}</td>
+      <td>{{(recette.difficulty is same as(null)) ? "non renseigné" : recette.difficulty}}</td>
+      <td>{{recette.createdAt|date('d/m/Y')}}</td>
+      <td><a href="{{path('app_recettes_edit', { id: recette.id})}}" class="btn btn-info">Modifier</a></td>
+      <td><a href="{{path('app_recettes_delete', { id: recette.id})}}" class="btn btn-danger">supprimer</a></td>
+    </tr>
+     {% endfor %} 
+     </tbody>
+</table>
+<div class="navigation d-flex justify-content-center">
+{{ knp_pagination_render(recettes) }}
+</div>
+{% else %}
+<h4>Il n'y a pas de recette</h4>
+{% endif %}
+</div>
+
+
+{% endblock %}
