@@ -8,10 +8,13 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasher;
+
 
 #[UniqueEntity('email')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[ORM\EntityListeners(['App\EntityListener\UserListener'])]
+
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -41,8 +44,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotBlank()]
     private ?string $password = null;
 
-    #[ORM\Column(length: 50)]
-    private ?string $User = null;
+   
 
     #[ORM\Column]
     #[Assert\NotNull()]
@@ -134,17 +136,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    public function getUser(): ?string
-    {
-        return $this->User;
-    }
-
-    public function setUser(string $User): static
-    {
-        $this->User = $User;
-
-        return $this;
-    }
+   
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {
@@ -192,6 +184,8 @@ public function setPlainPassword($plainPassword)
 
    return $this;
 }
+
+
 
 
     public function  __construct(){
