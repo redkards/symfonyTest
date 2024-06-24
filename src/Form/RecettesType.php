@@ -16,11 +16,19 @@ use Symfony\Component\Form\Extension\Core\Type\RangeType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
 class RecettesType extends AbstractType
 {
+    private $token;
+
+    public function __construct(TokenStorageInterface $token){
+        $this->token = $token;
+    }
+
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -123,6 +131,13 @@ class RecettesType extends AbstractType
             
             
             ->add('ingredient', EntityType::class, [
+
+                'class'=>IngredientType::class,
+                'querry_builder'=> function (IngredientRepository $r){
+                    return $r->createQueryBuilder('i')
+                    ->orderBy('i.name', 'ASC')
+                    ->setParameter('user', $this->token->getToken()->getUser());
+                },
 
                 'label'=>'les ingrédients',
                 'label_attr'=>[
