@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -60,6 +62,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Length(min:2,max:50)]
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $pseudo = null;
+
+    /**
+     * @var Collection<int, Ingredient>
+     */
+    #[ORM\OneToMany(targetEntity: Ingredient::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $ingredient;
+
+    /**
+     * @var Collection<int, recettes>
+     */
+    #[ORM\OneToMany(targetEntity: recettes::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $recettes;
 
     public function getId(): ?int
     {
@@ -190,7 +204,69 @@ public function setPlainPassword($plainPassword)
 
     public function  __construct(){
         $this->createdAt = new \DateTimeImmutable();
+        $this->ingredient = new ArrayCollection();
+        $this->recettes = new ArrayCollection();
        
     
 }
+
+    /**
+     * @return Collection<int, Ingredient>
+     */
+    public function getIngredient(): Collection
+    {
+        return $this->ingredient;
+    }
+
+    public function addIngredient(Ingredient $ingredient): static
+    {
+        if (!$this->ingredient->contains($ingredient)) {
+            $this->ingredient->add($ingredient);
+            $ingredient->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIngredient(Ingredient $ingredient): static
+    {
+        if ($this->ingredient->removeElement($ingredient)) {
+            // set the owning side to null (unless already changed)
+            if ($ingredient->getUser() === $this) {
+                $ingredient->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, recettes>
+     */
+    public function getRecettes(): Collection
+    {
+        return $this->recettes;
+    }
+
+    public function addRecette(recettes $recette): static
+    {
+        if (!$this->recettes->contains($recette)) {
+            $this->recettes->add($recette);
+            $recette->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRecette(recettes $recette): static
+    {
+        if ($this->recettes->removeElement($recette)) {
+            // set the owning side to null (unless already changed)
+            if ($recette->getUser() === $this) {
+                $recette->setUser(null);
+            }
+        }
+
+        return $this;
+    }
 }

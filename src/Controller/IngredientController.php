@@ -3,7 +3,8 @@
 namespace App\Controller;
 
 
-use App\Entity\Ingredient;
+
+use App\Entity\ingredient;
 use App\Form\IngredientType;
 use App\Repository\IngredientRepository;
 
@@ -29,7 +30,7 @@ class IngredientController extends AbstractController
     {
        
         $ingredients = $paginator->paginate(
-            $ingredientRepository->findAll(),
+            $ingredientRepository->findBy(['user'=>$this->getUser()]),
             $request->query->getInt('page', 1),
             10
         );
@@ -55,8 +56,12 @@ class IngredientController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()){
         $ingredient = $form->getData();
+        $ingredient->setUser($this->getUser());
+
+
         $manager->persist($ingredient);
         $manager->flush();
+
         $this->addFlash('success', 'votre ingrédient a bien été ajouté');
         return $this->redirectToRoute('app_ingredient');
         }

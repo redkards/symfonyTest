@@ -45,6 +45,10 @@ class Ingredient
     #[ORM\ManyToMany(targetEntity: Recettes::class, mappedBy: 'ingredient')]
     private Collection $recettes;
 
+    #[ORM\ManyToOne(inversedBy: 'ingredient')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
     
 
     public function getId(): ?int
@@ -101,7 +105,7 @@ class Ingredient
         return $this->recettes;
     }
 
-    public function addRecette(Recettes $recette): static
+    public function addRecettes(Recettes $recette): static
     {
         if (!$this->recettes->contains($recette)) {
             $this->recettes->add($recette);
@@ -111,7 +115,7 @@ class Ingredient
         return $this;
     }
 
-    public function removeRecette(Recettes $recette): static
+    public function removeRecettes(Recettes $recette): static
     {
         if ($this->recettes->removeElement($recette)) {
             $recette->removeIngredient($this);
@@ -122,5 +126,17 @@ class Ingredient
 
     public function __toString() {
         return $this->name;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
     }
 }

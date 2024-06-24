@@ -29,7 +29,7 @@ class RecettesController extends AbstractController
     {
        
         $recettes = $paginator->paginate(
-            $recettesRepository->findAll(),
+            $recettesRepository->findBy(['user'=>$this->getUser()]),
             $request->query->getInt('page', 1),
             10
         );
@@ -55,6 +55,7 @@ class RecettesController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()){
         $recettes = $form->getData();
+        $recettes->setUser($this->getUser());
 
         $manager->persist($recettes);
         $manager->flush();
@@ -76,6 +77,7 @@ class RecettesController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()){
         $recettes = $form->getData();
+        $recettes->setUser($this->getUser());
 
         $manager->persist($recettes);
         $manager->flush();

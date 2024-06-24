@@ -7,6 +7,7 @@ use Faker\Factory;
 use App\Entity\Ingredient;
 use App\Entity\Recettes;
 use App\Entity\User;
+use App\Entity\Users;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -26,20 +27,37 @@ public function __construct(UserPasswordHasherInterface $hasher){
 }
 
 
+
+
+
+
+public function load(ObjectManager $manager): void
+{
+    //Users
+    $users=[];
+    for($i=0; $i<10 ; $i++) {
+     $user = new User();
+     $user ->setName($this->faker->name())
+     ->setPseudo(mt_rand(0,1)===1 ? $this -> faker->firstName():null)
+     ->setEmail($this->faker->email())   
+     ->setRoles(['ROLE_USER'])
+     ->setPlainPassword("password");
     
-
+     $users[] = $user;
     
-
-    public function load(ObjectManager $manager): void
-    {
-
-        //data ingredient
-        $ingredient =[];
-        for ($i=0; $i<50 ; $i++){
-       $ingredient = new Ingredient();
-       $ingredient ->setName($this->faker->word())
-                   ->setPrice(mt_rand(0,100));
-                   $ingredients[] = $ingredient;
+     
+    
+     $manager->persist($user);
+    }
+    
+    //data ingredient
+    $ingredient =[];
+    for ($i=0; $i<50 ; $i++){
+        $ingredient = new Ingredient();
+        $ingredient ->setName($this->faker->word())
+        ->setPrice(mt_rand(0,100))
+        ->setUser($users[mt_rand(0,count($users)-1)]);
+        $ingredients[] = $ingredient;
                    
          $manager->persist($ingredient);
         }
@@ -52,7 +70,8 @@ public function __construct(UserPasswordHasherInterface $hasher){
     -> setDifficulty(mt_rand(0,1)==1? mt_rand(1,5) : null)
     ->setDescription($this->faker->text(300))
     ->setPrice(mt_rand(0,1)==1? mt_rand(1,1000) : null)
-    ->setisFavorite(mt_rand(0,1)==1? true:false);
+    ->setisFavorite(mt_rand(0,1)==1? true:false)
+    ->setUser($users[mt_rand(0,count($users)-1)]);
 
 for ($k=0; $k < mt_rand(5,15) ; $k++) {
     $recette->addIngredient($ingredients[mt_rand(0,count($ingredients)-1)]);
@@ -61,21 +80,6 @@ for ($k=0; $k < mt_rand(5,15) ; $k++) {
     $manager->persist($recette);
    }
 
-   //Users
-
-   for($i=0; $i<10 ; $i++) {
-    $user = new User();
-    $user ->setName($this->faker->name())
-    ->setPseudo(mt_rand(0,1)===1 ? $this -> faker->firstName():null)
-    ->setEmail($this->faker->email())
-    ->setPassword('password')
-    ->setRoles(['ROLE_USER'])
-    ->setPlainPassword("password");
-
-    
-
-    $manager->persist($user);
-}
    
 
 
