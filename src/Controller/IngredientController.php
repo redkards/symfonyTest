@@ -4,7 +4,7 @@ namespace App\Controller;
 
 
 
-use App\Entity\ingredient;
+use App\Entity\Ingredient;
 use App\Form\IngredientType;
 use App\Repository\IngredientRepository;
 

@@ -12,7 +12,8 @@
         {% endblock %}
 
         {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
+         {{encore_entry_script_tags('app')}}
+         <script scr="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/united/bootstrap.bundle.min.js"></script>
         {% endblock %}
     </head>
     <body>
