@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class IngredientController extends AbstractController
 {
@@ -46,6 +47,7 @@ class IngredientController extends AbstractController
      * @return Response
      */
     #[Route('/ingredient/nouveau/', name: 'app_ingredient_new',methods:['GET', 'POST'])]
+   
     public function new(Request $request,EntityManagerInterface $manager):Response
     {
 
@@ -107,4 +109,6 @@ if(!$ingredient){
     $this->addFlash('success', 'votre ingrédient a bien été supprimé');
     return $this->redirectToRoute('app_ingredient');
 }
+
+
 }

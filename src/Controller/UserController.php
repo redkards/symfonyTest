@@ -100,7 +100,7 @@ return $this->render('pages/user/edit.html.twig',[
 
 }
 
-#[Route('/utilisateur/edition-mot-de-passe/{id}', name: 'user_edit_password', methods:['GET','POST'])]
+#[Route('/utilisateur/edition-mot-de-passe/{id}', name: 'app_user_edit_password', methods:['GET','POST'])]
 public function editPassword(UserRepository $userRepository, int $id,Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher):Response{
     
     //recupération du user par son id
